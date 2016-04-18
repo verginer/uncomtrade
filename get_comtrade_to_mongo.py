@@ -32,11 +32,12 @@ for year in range(1962, 2015):
     while i >= 0:
         country = country_codes[i]
         if is_in_db(country, COMMODITY, year):
-            i -= 1
-            logging.debug("already in DB, country: {country}, year: {year}".format(
+            logging.debug("already in DB, country: {country}, year: {year} at position, {pos}".format(
                 country=country,
-                year=year)
+                year=year,
+                pos=i)
             )
+            i -= 1
             continue
 
         time.sleep(INTERVAL_BETWEEN_REQUESTS)
@@ -60,9 +61,9 @@ for year in range(1962, 2015):
                 )
                 i -= 1
                 continue
-        if type(json_data) is list:
+        elif type(json_data) is list and not json_data:
             res = COLLECTION.insert_one({"rtCode": int(country), "cmdCode": COMMODITY, "yr": year, "pfCode": "S1"})
-            logging.debug("inserted empty entry in MongoDB at (Object_ID): "+str(res.inserted_id))
+            logging.debug("inserted empty entry in MongoDB at (Object_ID) {id} at position {pos}".format(id=str(res.inserted_id), pos=i))
             i -= 1
         elif json_data == 409:
             logging.warning(msg="409 code received at: {country} at position {position},sleeping for {sleep}".format(
@@ -90,3 +91,4 @@ for year in range(1962, 2015):
             logging.debug(msg="skipped for reason: {reason}".format(reason=json_data))
             i -= 1
             continue
+
