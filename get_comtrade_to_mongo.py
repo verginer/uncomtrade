@@ -1,5 +1,5 @@
 import pymongo
-from wtwcom import comtrade_api
+from uncomtrade import comtrade_api
 import time
 import logging
 
