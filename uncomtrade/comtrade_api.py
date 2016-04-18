@@ -37,13 +37,14 @@ def get_commodity_data(country_code, commodity_code="TOTAL", year=2013, classifi
         try:
             get_request = requests.get("http://comtrade.un.org/api/get?", params=parameters, timeout=TIMEOUT)
             failed = False
-        except requests.exceptions.Timeout:
-            logging.warning("request timed out at country {country} at trial: {trial}".format(
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as err:
+            logging.warning("request timed out at country {country} at trial: {trial} for error: {err}".format(
                 country=country_code,
-                trial=trial))
+                trial=trial,
+                err=err))
             trial += 1
             if trial > MAX_TRY:
-                logging.warning("Giving up on request, country: {country}, year: {year}".format(
+                logging.warning("! Giving up on request, country: {country}, year: {year} !".format(
                     country=country_code,
                     year=year)
                 )

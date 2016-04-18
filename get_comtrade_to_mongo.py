@@ -1,13 +1,14 @@
 import pymongo
 from uncomtrade import comtrade_api
+from uncomtrade.notification import notify
 import time
 import logging
 
 logging.basicConfig(filename='com_trade.log', level=logging.DEBUG)
 
-INTERVAL_BETWEEN_REQUESTS = 7
+INTERVAL_BETWEEN_REQUESTS = 3
 MINUTE = 60
-MINUTES_BETWEEN_409_REQUESTS = 65
+MINUTES_BETWEEN_409_REQUESTS = 3
 
 COMMODITY = "TOTAL"
 
@@ -66,11 +67,17 @@ for year in range(1962, 2015):
             logging.debug("inserted empty entry in MongoDB at (Object_ID) {id} at position {pos}".format(id=str(res.inserted_id), pos=i))
             i -= 1
         elif json_data == 409:
-            logging.warning(msg="409 code received at: {country} at position {position},sleeping for {sleep}".format(
+
+            message = "409 code received at: {country} at position {position},sleeping for {sleep}".format(
                 country=country,
                 sleep=MINUTES_BETWEEN_409_REQUESTS,
                 position=i
-            ))
+            )
+            logging.warning(msg=message)
+            notify(title="UN Comtrade Quota Limit reached",
+                   subtitle="Please change proxy",
+                   message=message,
+                   sound='bell')
             for minute in range(MINUTES_BETWEEN_409_REQUESTS):
                 logging.debug("{minute} minute(s) of {max_min} passed.".format(
                     minute=minute,
