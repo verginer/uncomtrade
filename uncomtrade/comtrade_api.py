@@ -1,6 +1,7 @@
 import requests
-# import json
 import logging
+import subprocess
+import psutil
 
 TIMEOUT = 5
 MAX_TRY = 3
@@ -63,3 +64,27 @@ def get_commodity_data(country_code, commodity_code="TOTAL", year=2013, classifi
             return "JSON Error"
     else:
         return get_request.status_code
+
+
+def _kill_proc(name):
+    for proc in psutil.process_iter():
+        if proc.name() == name:
+            proc.kill()
+
+
+def swithch_vpn(on_off="off"):
+    if on_off is "off":
+        # pia_tray
+        try:
+            _kill_proc("launch_pia")
+            _kill_proc("pia_tray")
+            _kill_proc("openvpn")
+            _kill_proc("pia_openvpn")
+        except:
+            pass
+        return "off"
+    elif on_off is "on":
+        subprocess.Popen([r"/Applications/Private Internet Access.app/Contents/MacOS/launch_pia"])
+        return "on"
+
+
