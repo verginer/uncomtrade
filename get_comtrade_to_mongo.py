@@ -18,7 +18,22 @@ COLLECTION = client.comtrade.total
 country_dict = list(client.comtrade.country_codes.find({}, {"id": 1, "_id": 0}))
 country_codes = [code["id"] for code in country_dict if "all" not in code["id"]]
 
-VPN_IS = "on"  # !!!!! TURN THE FREAKING VPN OFF !!!!!!
+VPN_STATUS = "on"  # !!!!! TURN THE FREAKING VPN OFF !!!!!!
+
+
+LOGO = r"""
+ #     # #     #     #####
+ #     # ##    #    #     #  ####  #    # ##### #####    ##   #####  ######
+ #     # # #   #    #       #    # ##  ##   #   #    #  #  #  #    # #
+ #     # #  #  #    #       #    # # ## #   #   #    # #    # #    # #####
+ #     # #   # #    #       #    # #    #   #   #####  ###### #    # #
+ #     # #    ##    #     # #    # #    #   #   #   #  #    # #    # #
+  #####  #     #     #####   ####  #    #   #   #    # #    # #####  ######
+
+                                            (c) Luca Verginer
+"""
+
+print(LOGO)
 
 
 def is_in_db(country_cd, com_code, year_check):
@@ -81,10 +96,10 @@ for year in range(1975, 2015):
                    message=message,
                    sound='bell')
 
-            if VPN_IS is "on":
-                VPN_IS = comtrade_api.swithch_vpn("off")
+            if VPN_STATUS is "on":
+                VPN_STATUS = comtrade_api.swithch_vpn("off")
             else:
-                VPN_IS = comtrade_api.swithch_vpn("on")
+                VPN_STATUS = comtrade_api.swithch_vpn("on")
 
             for minute in range(MINUTES_BETWEEN_409_REQUESTS):
                 logging.debug("{minute} minute(s) of {max_min} passed.".format(
